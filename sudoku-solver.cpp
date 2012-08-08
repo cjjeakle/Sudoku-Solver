@@ -102,6 +102,32 @@ void clearMatches (int board[9][9][10]);
 void solveSingletons (int board[9][9][10]);
 
 //Requires: a valid board
+//Modifies: board
+//Effects: finds numbers in a row, col, or sub-board that have multiple possibilities
+//	but are the only possible solution for a specific number, then makes that the answer
+//	ex: 4, 7,and 9 are possible in a square, but it is the only 9 possible in its col,
+// 	this means the square is a 9.
+void findLoneSolutions (int board[9][9][10]);
+
+//Requires: a valid board
+//Modifies: board
+//Effects: finds numbers in a sub-board that are the only possible solution
+//	but have multiple allowable solutions
+void subboardLoneSolutions (int board [9][9][10], int row, int col);
+
+//Requires: a valid board
+//Modifies: board
+//Effects: finds numbers in a row that are the only possible solution
+//	but have multiple allowable solutions
+void rowLoneSolutions (int board [9][9][10], int row, int col);
+
+//Requires: a valid board
+//Modifies: board
+//Effects: finds numbers in a col that are the only possible solution
+//	but have multiple allowable solutions
+void colLoneSolutions (int board [9][9][10], int row, int col);
+
+//Requires: a valid board
 //Modifies: N/A
 //Effects: returns false if any squares still need solutions, returns true otherwise
 bool checkComplete (int board[9][9][10]);
@@ -142,7 +168,7 @@ int main()
 				
 				for (int n = 0; n < 9; n++)
 				{	
-					if (x != n)
+					if ((x - 1) != n)
 					{
 						board [i][j][n] = 0;
 					}
@@ -162,6 +188,7 @@ int main()
 			solveSingletons (board);
 			checker++;
 		}
+		findLoneSolutions(board);
 		complete = checkComplete(board);	
 	}
 	
@@ -236,20 +263,20 @@ void printBoard (int board[9][9][10])
 		}
 		cout << endl;
 	}
-	/*(outputs the current possibilities being considered)
-	for (int i = 0; i < 3; i++)
+	///*(outputs the current possibilities being considered)
+	for (int i = 0; i < 9; i++)
 	{
 		for (int j = 0; j < 3; j++)
 		{
 			cout << i << " " << j <<endl;
 			for (int n = 0; n < 10; n++)
 			{
-				cout << " location:" << n <<" value: " <<board[i][j][n] <<endl;
+				cout << " location:" << n+1 <<" value: " <<board[i][j][n] <<endl;
 			}
 			cout << endl <<endl <<endl;
 		}
 	}
-	*/
+	//*/
 }
 	
 
@@ -354,6 +381,130 @@ void solveSingletons (int board[9][9][10])
 		}
 	}
 }
+
+
+void findLoneSolutions (int board[9][9][10])
+{
+	//rows
+	for (int i = 0; i< 9; i++)
+	{	
+		//cols
+		for (int j = 0; j < 9; j++)
+		{
+			subboardLoneSolutions (board, i, j);
+			rowLoneSolutions (board, i, j);
+			colLoneSolutions (board, i, j);
+		}
+	}
+}
+
+
+void subboardLoneSolutions (int board [9][9][10], int row, int col)
+{
+	int subBoardRow = row/3;
+	int subBoardCol = col/3;
+	//iterate possible numbers
+	for (int n = 0; n < 9; n++)
+	{
+		int alternatives = 0;
+		//navigate the rows
+		for (int i = 0; i < 9; i++)
+		{
+			//navigate the cols
+			for (int j = 0; j < 9; j++)
+			{
+				if ((board [i][j][9] == 0) && (i/3 == subBoardRow)\
+				&& (j/3 == subBoardCol) && (i != row) && (j != col)\
+				&& (board[i][j][n] == 2)) 
+				{
+					alternatives++;
+				}
+			}
+		}
+		if ((alternatives == 0) && (board[row][col][n] == 2))
+		{
+			board[row][col][9] = n+1;
+			board[row][col][n] = 1;
+			for (int x = 0; x < 9; x++)
+			{
+				if (x != n)
+				{
+					board[row][col][x] = 0;
+				}
+			}
+			eliminateSubBoard (board, n+1, row, col);
+			eliminateRow (board, n+1, row, col);
+			eliminateCol (board, n+1, row, col);
+		}
+	}
+}
+
+void rowLoneSolutions (int board [9][9][10], int row, int col)
+{
+	//iterate possible numbers
+	for (int n = 0; n < 9; n++)
+	{
+		int alternatives = 0;
+		//navigate the cols
+		for (int j = 0; j < 9; j++)
+		{
+			if ((board [row][j][9] == 0) && (j != col) &&\
+			(board[row][j][n] == 2))
+			{
+				alternatives++;
+			}
+		}	
+		if ((alternatives == 0) && (board[row][col][n] == 2))
+		{
+			board[row][col][9] = n+1;
+			board[row][col][n] = 1;
+			for (int x = 0; x < 9; x++)
+			{
+				if (x != n)
+				{
+					board[row][col][x] = 0;
+				}
+			}
+			eliminateSubBoard (board, n+1, row, col);
+			eliminateRow (board, n+1, row, col);
+			eliminateCol (board, n+1, row, col);
+		}
+	}
+}
+
+void colLoneSolutions (int board [9][9][10], int row, int col)
+{
+	//iterate possible numbers
+	for (int n = 0; n < 9; n++)
+	{
+		int alternatives = 0;
+		//navigate the rows
+		for (int i = 0; i < 9; i++)
+		{
+			if ((board [i][col][9] == 0) && (i != row) &&\
+			(board[i][col][n] == 2))
+			{
+				alternatives++;
+			}
+		}
+		if ((alternatives == 0) && (board[row][col][n] == 2))
+		{
+			board[row][col][9] = n+1;
+			board[row][col][n] = 1;
+			for (int x = 0; x < 9; x++)
+			{
+				if (x != n)
+				{
+					board[row][col][x] = 0;
+				}
+			}
+			eliminateSubBoard (board, n+1, row, col);
+			eliminateRow (board, n+1, row, col);
+			eliminateCol (board, n+1, row, col);
+		}
+	}	
+}
+
 
 
 bool checkComplete (int board[9][9][10])
