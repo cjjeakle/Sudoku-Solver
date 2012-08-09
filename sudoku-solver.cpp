@@ -104,23 +104,30 @@ void solveSingletons (int board[9][9][10]);
 
 //Requires: a valid board
 //Modifies: board
-//Effects: finds numbers in a row, col, or sub-board that have multiple possibilities
+//Effects: finds numbers in a row or col that have multiple possibilities
 //	but are the only possible solution for a specific number, then makes that the answer
 //	ex: 4, 7,and 9 are possible in a square, but it is the only 9 possible in its col,
 // 	this means the square is a 9.
+//	This function is also used to call onlyInARow and onlyInACol.
 void findLoneSolutions (int board[9][9][10]);
 
 //Requires: a valid board
 //Modifies: board
-//Effects: finds numbers in a row that are the only possible solution
+//Effects: finds squares in a row that are the only possible solution for a number
 //	but have multiple allowable solutions
 void rowLoneSolutions (int board [9][9][10], int row, int col);
 
 //Requires: a valid board
 //Modifies: board
-//Effects: finds numbers in a col that are the only possible solution
+//Effects: finds squares in a col that are the only possible solution for a number
 //	but have multiple allowable solutions
 void colLoneSolutions (int board [9][9][10], int row, int col);
+
+//Requires: a valid board
+//Modifies: board
+//Effects: finds numbers in a sub-board that are the only possible in one square of
+//	the sub-board, denotes that as the solution to its given square
+void subBoardLoneSolution (int board [9][9][10]);
 
 //Requires: a valid board
 //Modifies: board
@@ -189,18 +196,17 @@ int main()
 	int checker = 0;
 	while (!complete && checker < 10000)
 	{
-		//iterate through solving step 5 times and check if complete, repeat 
-		for (int i = 0; i < 5; i++)
-		{
-			solveSingletons (board);
-			findLoneSolutions(board);
-			checker++;
-		}
-		complete = checkComplete(board);	
+		solveSingletons (board);
+		findLoneSolutions(board);
+		subBoardLoneSolution (board);
+		complete = checkComplete(board);
+		checker++;
 	}
 	
+	
 	cout << checker <<endl;
-	//print what should be a solved board
+	//print what will hopefully be a solved board or a partially solved board
+	//and coordinates for all unsolved possibilities
 	printBoard (board);
 	return 0;
 }
@@ -208,6 +214,7 @@ int main()
 
 void printBoard (int board[9][9][10])
 {
+	//print the board
 	for (int i = 0; i < 9; i++)
 	{
 		for (int j = 0; j < 9; j++)
@@ -270,6 +277,7 @@ void printBoard (int board[9][9][10])
 		}
 		cout << endl;
 	}
+	//print any unsolved square coordinates and their possible solutions
 	for (int i = 0; i < 9; i++)
 	{
 		for (int j = 0; j < 9; j++)
@@ -403,7 +411,6 @@ void findLoneSolutions (int board[9][9][10])
 		{
 			rowLoneSolutions (board, i, j);
 			colLoneSolutions (board, i, j);
-			//subboardLoneSolutions (board, i, j);
 			onlyInARow (board, i, j);
 			onlyInACol (board, i, j);
 		}
@@ -483,6 +490,57 @@ void colLoneSolutions (int board [9][9][10], int row, int col)
 	}	
 }
 
+
+void subBoardLoneSolution (int board [9][9][10])
+{
+	for (int subBoardRow = 0; subBoardRow < 3; subBoardRow++)
+	{
+		for (int subBoardCol = 0; subBoardCol < 3; subBoardCol++)
+		{
+			//iterate number being checked
+			for (int n = 0; n < 9; n++)
+			{
+				int possibilities = 0;
+				int row = 0;
+				int col = 0;
+				//rows
+				for (int i = 0; i < 9; i++)
+				{
+					//cols
+					for (int j = 0; j < 9; j++)
+					{
+						//we are in the correct sub-board for 
+						//comparison and n is possible 
+						//for the square in question
+						if (i/3 == subBoardRow && j/3 ==\
+						subBoardCol && board[i][j][n] == 2)
+						{
+							possibilities++;
+							row = i;
+							col = j;
+						}
+					}
+				}
+				if (possibilities == 1)
+				{
+					board [row][col][9] = n+1;
+					board [row][col][n] = 1;
+					for (int x = 0; x < 9; x++)
+					{
+						if (x != n)
+						{
+							board[row][col][x] = 0;
+						}
+					}
+					eliminateSubBoard (board, n+1, row, col);
+					eliminateRow (board, n+1, row, col);
+					eliminateCol (board, n+1, row, col);
+				}
+			}
+		}
+	}
+}
+					
 
 void onlyInACol (int board[9][9][10], int row, int col)
 {
