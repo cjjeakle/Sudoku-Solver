@@ -37,7 +37,7 @@ int main()
 		{
 			//we assign a 1 to any location values that are garanteed true
 			cin >> x;
-			if (x != 0)
+			if (x > 0 && x < 10)
 			{
 				board [i][j][(x - 1)] = 1;
 				board [i][j][9] = x;

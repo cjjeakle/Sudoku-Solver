@@ -16,6 +16,4 @@ How it works:
 Changes to make:
 
 * investigate more complex sudoku strategy for solving puzzles of the highest difficulty
-* add error checking of user input (could prove quite complex)
 
-* EVENTUALLY: port to javascript, make a mobile compatible website
