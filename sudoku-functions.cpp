@@ -1,7 +1,6 @@
 //Sudoku Solver function declarations
 //written by: Chris Jeakle (cjjeakle)
 
-#include <iostream>
 #include "sudoku_header.h"
 
 using namespace std;
@@ -159,7 +158,7 @@ void clearMatches (int board[9][9][10])
 }
 
 
-void solveSingletons (int board[9][9][10])
+void solveSingletons (int board[9][9][10], bool &change)
 {
 	//rows
 	for (int i = 0; i< 9; i++)
@@ -190,6 +189,7 @@ void solveSingletons (int board[9][9][10])
 					eliminateSubBoard (board, possibleAns, i, j);
 					eliminateRow (board, possibleAns, i, j);
 					eliminateCol (board, possibleAns, i, j);
+					change = true;
 				}
 			}
 		}
@@ -197,7 +197,7 @@ void solveSingletons (int board[9][9][10])
 }
 
 
-void findLoneSolutions (int board[9][9][10])
+void findLoneSolutions (int board[9][9][10], bool &change)
 {
 	//rows
 	for (int i = 0; i< 9; i++)
@@ -205,16 +205,16 @@ void findLoneSolutions (int board[9][9][10])
 		//cols
 		for (int j = 0; j < 9; j++)
 		{
-			rowLoneSolutions (board, i, j);
-			colLoneSolutions (board, i, j);
-			onlyInARow (board, i, j);
-			onlyInACol (board, i, j);
+			rowLoneSolutions (board, i, j, change);
+			colLoneSolutions (board, i, j, change);
+			onlyInARow (board, i, j, change);
+			onlyInACol (board, i, j, change);
 		}
 	}
 }
 
 
-void rowLoneSolutions (int board [9][9][10], int row, int col)
+void rowLoneSolutions (int board [9][9][10], int row, int col, bool &change)
 {
 	//iterate possible numbers
 	for (int n = 0; n < 9; n++)
@@ -248,12 +248,14 @@ void rowLoneSolutions (int board [9][9][10], int row, int col)
 				eliminateSubBoard (board, n+1, row, col);
 				eliminateRow (board, n+1, row, col);
 				eliminateCol (board, n+1, row, col);
+				change = true;
 			}
 		}
 	}
 }
 
-void colLoneSolutions (int board [9][9][10], int row, int col)
+
+void colLoneSolutions (int board [9][9][10], int row, int col, bool &change)
 {
 	//iterate possible numbers
 	for (int n = 0; n < 9; n++)
@@ -286,13 +288,14 @@ void colLoneSolutions (int board [9][9][10], int row, int col)
 				eliminateSubBoard (board, n+1, row, col);
 				eliminateRow (board, n+1, row, col);
 				eliminateCol (board, n+1, row, col);
+				change = true;
 			}
 		}
 	}	
 }
 
 
-void subBoardLoneSolution (int board [9][9][10])
+void subBoardLoneSolution (int board [9][9][10], bool &change)
 {
 	//we navigate the 9 sub-boards
 	for (int subBoardRow = 0; subBoardRow < 3; subBoardRow++)
@@ -339,6 +342,7 @@ void subBoardLoneSolution (int board [9][9][10])
 					eliminateSubBoard (board, n+1, row, col);
 					eliminateRow (board, n+1, row, col);
 					eliminateCol (board, n+1, row, col);
+					change = true;
 				}
 			}
 		}
@@ -346,7 +350,7 @@ void subBoardLoneSolution (int board [9][9][10])
 }
 					
 
-void onlyInACol (int board[9][9][10], int row, int col)
+void onlyInACol (int board[9][9][10], int row, int col, bool &change)
 {
 	int subBoardRow = row/3;
 	int subBoardCol = col/3;
@@ -387,12 +391,14 @@ void onlyInACol (int board[9][9][10], int row, int col)
 					board[i][col][n] = 0;
 				}
 			}
+			change = true;
 		}
 	} 
 					
 }
 
-void onlyInARow (int board[9][9][10], int row, int col)
+
+void onlyInARow (int board[9][9][10], int row, int col, bool &change)
 {
 	int subBoardRow = row/3;
 	int subBoardCol = col/3;
@@ -433,26 +439,8 @@ void onlyInARow (int board[9][9][10], int row, int col)
 					board[row][j][n] = 0;
 				}
 			}
+			change = true;
 		}
 	} 			
-}
-
-
-bool checkComplete (int board[9][9][10])
-{
-	//rows
-	for (int i = 0; i < 9; i++)
-	{	
-		//cols
-		for (int j = 0; j < 9; j++)
-		{
-			//if a square lacks a solution, the board is incomplete
-			if (board[i][j][9] == 0)
-			{
-				return false;
-			}
-		}
-	}
-	return true;
 }
 

@@ -7,6 +7,7 @@
 #ifndef sudoku_header
 #define sudoku_header
 
+#include <iostream>
 
 //credit goes to shuttle87 on this suggestion for color coding output
 //http://stackoverflow.com/questions/9158150/colored-output-in-c
@@ -96,59 +97,60 @@ void eliminateCol (int board[9][9][10], int basis, int row, int col);
 //Requires: a board that has just been populated by the user
 //Modifies: board
 //Effects: takes a newly populated board and eliminates the givens as possibilities
-//	for conflicting squares
+//	for conflicting squares.
 void clearMatches (int board[9][9][10]);
 
 //Requires: a valid board
-//Modifies: board
+//Modifies: board, change
 //Effects: finds all squares with one possible number as a solution, assigns that
 //	single possibility as a solution to the square.
-//	possibilities in the sub-board, row and col that match the solved num are removed
-void solveSingletons (int board[9][9][10]);
+//	possibilities in the sub-board, row and col that match the solved num are removed.
+//	If a change is made, change = true.
+void solveSingletons (int board[9][9][10], bool &change);
 
 //Requires: a valid board
-//Modifies: board
+//Modifies: board, change
 //Effects: finds numbers in a row or col that have multiple possibilities
 //	but are the only possible solution for a specific number, then makes that the answer
 //	ex: 4, 7,and 9 are possible in a square, but it is the only 9 possible in its col,
 // 	this means the square is a 9.
 //	This function is also used to call onlyInARow and onlyInACol.
-void findLoneSolutions (int board[9][9][10]);
+//	If a change is made, change = true.
+void findLoneSolutions (int board[9][9][10], bool &change);
 
 //Requires: a valid board
-//Modifies: board
+//Modifies: board, change
 //Effects: finds squares in a row that are the only possible solution for a number
-//	but have multiple allowable solutions
-void rowLoneSolutions (int board [9][9][10], int row, int col);
+//	but have multiple allowable solutions. If a change is made, change = true.
+void rowLoneSolutions (int board [9][9][10], int row, int col, bool &change);
 
 //Requires: a valid board
-//Modifies: board
+//Modifies: board, change
 //Effects: finds squares in a col that are the only possible solution for a number
-//	but have multiple allowable solutions
-void colLoneSolutions (int board [9][9][10], int row, int col);
+//	but have multiple allowable solutions. If a change is made, change = true.
+void colLoneSolutions (int board [9][9][10], int row, int col, bool &change);
 
 //Requires: a valid board
-//Modifies: board
+//Modifies: board, change
 //Effects: finds numbers in a sub-board that are the only possible in one square of
-//	the sub-board, denotes that as the solution to its given square
-void subBoardLoneSolution (int board [9][9][10]);
+//	the sub-board, denotes that as the solution to its given square.
+//	If a change is made, change = true.
+void subBoardLoneSolution (int board [9][9][10], bool &change);
 
 //Requires: a valid board
-//Modifies: board
+//Modifies: board, change
 //Effects: finds any possibility that only exists in one col of a given sub-board,
-//	eliminates possibilities using this information
-void onlyInACol (int board[9][9][10], int row, int col);
+//	eliminates possibilities using this information.
+//	If a change is made, change = true.
+void onlyInACol (int board[9][9][10], int row, int col, bool &change);
 
 //Requires: a valid board
-//Modifies: board
+//Modifies: board, change
 //Effects: finds any possibility that only exists in one row of a given sub-board,
-//	eliminates possibilities using this information
-void onlyInARow (int board[9][9][10], int row, int col);
+//	eliminates possibilities using this information.
+//	If a change is made, change = true.
+void onlyInARow (int board[9][9][10], int row, int col, bool &change);
 
-//Requires: a valid board
-//Modifies: N/A
-//Effects: returns false if any squares still need solutions, returns true otherwise
-bool checkComplete (int board[9][9][10]);
 
 #endif //sudoku-header 
 
