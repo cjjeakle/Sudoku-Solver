@@ -8,6 +8,10 @@
 #define sudoku_header
 
 #include <iostream>
+#include <vector>
+#include <queue>
+
+using namespace std;
 
 //credit goes to shuttle87 on this suggestion for color coding output
 //http://stackoverflow.com/questions/9158150/colored-output-in-c
@@ -168,10 +172,7 @@ inline bool valid (vector<vector<vector<int> > >  &board);
 
 inline bool solution (vector<vector<vector<int> > >  &board);
 
-backtrackingCall (vector<vector<vector<int> > >  &board);
-
-void backtrackingSol (vector<vector<vector<int> > >  board, bool &incomplete
-	vector<vector<vector<int> > >  &sol, int row, int col, int guess);
+void backtrackingSol (vector<vector<vector<int> > >  &board);
 
 #endif //sudoku-header 
 

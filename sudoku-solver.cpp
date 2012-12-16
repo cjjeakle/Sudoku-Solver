@@ -3,8 +3,6 @@
 
 #include "sudoku_header.h"
 
-using namespace std;
-
 int main()
 {
 	//intitlize the board, at this point everything is a possibility
@@ -56,7 +54,7 @@ int main()
 	}
 	
 	//use backtracking for harder puzzles
-	backtrackingCall (board);
+	backtrackingSol (board);
 	
 	//print what will hopefully be a solved board
 	printBoard (board);

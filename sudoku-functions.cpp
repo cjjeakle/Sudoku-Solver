@@ -3,9 +3,6 @@
 
 #include "sudoku_header.h"
 
-using namespace std;
-
-
 void printBoard (vector<vector<vector<int> > >  &board)
 {
 	//print the board
@@ -489,7 +486,7 @@ inline bool solution (vector<vector<vector<int> > >  &board)
 	{
 		for (int j = 0; j < 9; j++)
 		{
-			if (board[i][i][9] == 0)
+			if (board[i][j][9] == 0)
 			{
 				return false;
 			}
@@ -498,95 +495,74 @@ inline bool solution (vector<vector<vector<int> > >  &board)
 	return true;
 }
 
-backtrackingCall (vector<vector<vector<int> > >  &board)
+void backtrackingSol (vector<vector<vector<int> > >  &board)
 {
-	for (int i = 0; i < 9; i++)
+	queue<vector<vector<vector<int> > > > q;
+	q.push(board);
+	int test = 0;
+	while (!q.empty() && !solution(q.front()) && test < 10)
 	{
-		for (int j = 0; j < 9; j++)
+		for (int i = 0; i < 9; i++)
 		{
-			if (baord[i][j][9] != 0)
+			for (int j = 0; j < 9; j++)
 			{
-				//if this square is solved,
-				//dont guess it
-				continue;
-			}
-			for (int n = 0;n < 9 && incomplete;n++)
-			{
-				if (board[i][j][n])
+				if (board[i][j][9] != 0)
 				{
-					backtrackingSol (board,
-					incomplete, board, i, j, n);
+					//if this square is solved,
+					//dont guess it
+					continue;
 				}
-			}
-		}
-	}
-}
-
-void backtrackingSol (vector<vector<vector<int> > >  board, bool &incomplete
-	vector<vector<vector<int> > >  &sol, int row, int col, int guess)
-{
-	//attempt the guess
-	board [row][col][9] = guess + 1;
-	board [row][col][guess] = 1;
-	for (int x = 0; x < 9; x++)
-	{
-		if (x != n)
-		{
-			board[row][col][x] = 0;
-		}
-	}
-	eliminateSubBoard(board, guess + 1, row, col);
-	eliminateRow (board, guess + 1, row, col);
-	eliminateCol (board, guess + 1, row, col);
-	
-	//check if the guess kept the board valid
-	if (valid(board))
-	{
-		if (solution(board))
-		{
-			sol.swap(board);
-			incomplete = false;
-			return;
-		}
-		else
-		{
-			bool change = true;
-			int checker = 0;
-			while (change && checker < 10)
-			{
-				change = false;
-				solveSingletons (board, change);
-				findLoneSolutions(board, change);
-				subBoardLoneSolution (board, change);
-				checker++;
-			}
-			
-			for (int i = 0; i < 9; i++)
-			{
-				for (int j = 0; j < 9; j++)
+				for (int n = 0; !q.empty() && n < 9; n++)
 				{
-					if (baord[i][j][9] != 0)
+					vector<vector<vector<int> > > temp\
+						(q.front());
+					
+					temp [i][j][9] = n + 1;
+					temp [i][j][n] = 1;
+					for (int x = 0; x < 9; x++)
 					{
-						//if this square is solved,
-						//dont guess it
-						continue;
-					}
-					for (int n = 0;n < 9 && incomplete;n++)
-					{
-						if (board[i][j][n])
+						if (x != n)
 						{
-							backtrackingSol (board,
-							incomplete, sol, i,j,n);
+							temp[i][j][x] = 0;
 						}
 					}
+					eliminateSubBoard(temp, n + 1, i, j);
+					eliminateRow (temp, n + 1, i, j);
+					eliminateCol (temp, n + 1, i, j);
+					
+					bool change = true;
+					int bound = 0;
+					
+					while (change && bound < 10)
+					{
+						change = false;
+						solveSingletons (temp, change);
+						findLoneSolutions(temp, change);
+						subBoardLoneSolution(temp,
+							change);
+						bound++;
+					}
+					
+					if (valid(temp))
+					{
+						q.push(temp);
+					}
 				}
+				q.pop();
 			}
 		}
 	}
+	if (!q.empty())
+	{
+		board.swap(q.front());
+	}
+	else
+	{
+		cerr << "something has gone wrong and the backtracking function"
+		<< "has failed" <<endl;
+	}
 }
-
-
-
+		
 
 
 
