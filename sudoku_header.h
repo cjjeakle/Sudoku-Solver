@@ -1,9 +1,9 @@
 //Sudoku Solver header file
 //written by: Chris Jeakle (cjjeakle)
 
-//an underscore was used between sudoku and header instead of a hyphen to prevent
-//compiler warnings about whitespace and hanging tokens (the word header is treated
-//as one when it comes after a hyphen)
+//an underscore was used between sudoku and header instead of a hyphen to 
+//prevent compiler warnings about whitespace and hanging tokens (the word header 
+//is treated as one when it comes after a hyphen)
 #ifndef sudoku_header
 #define sudoku_header
 
@@ -38,17 +38,19 @@ the board is an array arranged as such:
   .     .     .
   .     .     .
   
-there are 9 sub-boards to consider, too (the nine 3x3 squares that can't contain repeats)
+there are 9 sub-boards to consider (the 9 3x3 squares that can't have repeats)
 These are arranged as:
 				    0 1 2
 				    - - -
 				  0|1 2 3
 				  1|4 5 6
 				  2|7 8 9
-a square's sub-board coordinates can be determined by interger dividing row and col coordinates by 3.
+a square's sub-board coordinates can be determined by interger dividing row 
+and col coordinates by 3.
   
   
-inside each of the 81 "squares" are 9 variables representing the 9 possible answers to that square:
+inside each of the 81 "squares" are 9 variables representing the 9 possible 
+answers to that square:
  
 			  one  |  two   | three
 			  ---  |  ---   |  ---
@@ -69,88 +71,107 @@ inside each of the 81 "squares" are 9 variables representing the 9 possible answ
 
 
 
-//Requires: a fully populated board, with any int value in the 9*9*10 array locations
+//Requires: a fully populated board, with any int value in the 9*9*10 array locs
 //Modifies: N/A
 //Effects: prints the sudoku board with all garanteed squares showing their 
 //	solution and all others showing a "?" 
-void printBoard (int board[9][9][10]);
+void printBoard (vector<vector<vector<int> > >  &board);
 
-//Requires: basis be a garanteed correct answer for row and col, board is populated
+//Requires: basis be a garanteed correct answer for row and col, board is valid
 //Modifies: board
 //Effects: takes a row and col, finds its equilivent sub-board, and removes
 //	"basis" as a possibility for all squares in this sub-board except 
 //	that with the row and col given
-void eliminateSubBoard (int board[9][9][10], int basis, int row, int col);
+void eliminateSubBoard (vector<vector<vector<int> > >  &board, int basis, 
+	int row, int col);
 
-//Requires: basis be a garanteed correct answer for row and col, board is populated
+//Requires: basis be a garanteed correct answer for row and col, board is valid
 //Modifies: board
-//Effects: takes a row and removes "basis" as a possibility for all squares except
-//	the square in "col"
-void eliminateRow (int board[9][9][10], int basis, int row, int col);
+//Effects: takes a row and removes "basis" as a possibility for all squares 
+//	except the square in "col"
+void eliminateRow (vector<vector<vector<int> > >  &board, int basis, int row, 
+	int col);
 
-//Requires: basis be a garanteed correct answer for row and col, board is populated
+//Requires: basis be a garanteed correct answer for row and col, board is valid
 //Modifies: board
-//Effects: takes a col and removes "basis" as a possibility for all squares except
-//	the square in "row"
-void eliminateCol (int board[9][9][10], int basis, int row, int col);
+//Effects: takes a col and removes "basis" as a possibility for all squares 
+//	except the square in "row"
+void eliminateCol (vector<vector<vector<int> > >  &board, int basis, int row, 
+	int col);
 
 //Requires: a board that has just been populated by the user
 //Modifies: board
-//Effects: takes a newly populated board and eliminates the givens as possibilities
-//	for conflicting squares.
-void clearMatches (int board[9][9][10]);
+//Effects: takes a newly populated board and eliminates the givens as
+//	possibilities for conflicting squares.
+void clearMatches (vector<vector<vector<int> > >  &board);
 
 //Requires: a valid board
 //Modifies: board, change
-//Effects: finds all squares with one possible number as a solution, assigns that
-//	single possibility as a solution to the square.
-//	possibilities in the sub-board, row and col that match the solved num are removed.
+//Effects: finds all squares with one possible number as a solution, assigns 
+//	that single possibility as a solution to the square.
+//	possibilities in the sub-board, row and col that match the solved num 
+//	are removed. 
 //	If a change is made, change = true.
-void solveSingletons (int board[9][9][10], bool &change);
+void solveSingletons (vector<vector<vector<int> > >  &board, bool &change);
 
 //Requires: a valid board
 //Modifies: board, change
 //Effects: finds numbers in a row or col that have multiple possibilities
-//	but are the only possible solution for a specific number, then makes that the answer
-//	ex: 4, 7,and 9 are possible in a square, but it is the only 9 possible in its col,
-// 	this means the square is a 9.
+//	but are the only possible solution for a specific number, then makes 
+//	that the answer ex: 4, 7,and 9 are possible in a square, but it is the 
+// 	only 9 possible in its col, this means the square is a 9.
 //	This function is also used to call onlyInARow and onlyInACol.
 //	If a change is made, change = true.
-void findLoneSolutions (int board[9][9][10], bool &change);
+void findLoneSolutions (vector<vector<vector<int> > >  &board, bool &change);
 
 //Requires: a valid board
 //Modifies: board, change
-//Effects: finds squares in a row that are the only possible solution for a number
-//	but have multiple allowable solutions. If a change is made, change = true.
-void rowLoneSolutions (int board [9][9][10], int row, int col, bool &change);
+//Effects: finds squares in a row that are the only possible solution for a 
+//	number but have multiple allowable solutions. If a change is made, 
+//	change = true.
+void rowLoneSolutions (vector<vector<vector<int> > >  &board, int row, int col,
+	bool &change);
 
 //Requires: a valid board
 //Modifies: board, change
-//Effects: finds squares in a col that are the only possible solution for a number
-//	but have multiple allowable solutions. If a change is made, change = true.
-void colLoneSolutions (int board [9][9][10], int row, int col, bool &change);
+//Effects: finds squares in a col that are the only possible solution for a 
+//	number but have multiple allowable solutions. If a change is made,
+//	change = true.
+void colLoneSolutions (vector<vector<vector<int> > >  &board, int row, int col,
+	bool &change);
 
 //Requires: a valid board
 //Modifies: board, change
-//Effects: finds numbers in a sub-board that are the only possible in one square of
-//	the sub-board, denotes that as the solution to its given square.
+//Effects: finds numbers in a sub-board that are the only possible in one square 
+//	of the sub-board, denotes that as the solution to its given square.
 //	If a change is made, change = true.
-void subBoardLoneSolution (int board [9][9][10], bool &change);
+void subBoardLoneSolution (vector<vector<vector<int> > >  &board, 
+	bool &change);
 
 //Requires: a valid board
 //Modifies: board, change
-//Effects: finds any possibility that only exists in one col of a given sub-board,
-//	eliminates possibilities using this information.
+//Effects: finds any possibility that only exists in one col of a given
+//	sub-board, eliminates possibilities using this information.
 //	If a change is made, change = true.
-void onlyInACol (int board[9][9][10], int row, int col, bool &change);
+void onlyInACol (vector<vector<vector<int> > >  &board, int row, int col, 
+	bool &change);
 
 //Requires: a valid board
 //Modifies: board, change
-//Effects: finds any possibility that only exists in one row of a given sub-board,
-//	eliminates possibilities using this information.
+//Effects: finds any possibility that only exists in one row of a given
+//	sub-board, eliminates possibilities using this information.
 //	If a change is made, change = true.
-void onlyInARow (int board[9][9][10], int row, int col, bool &change);
+void onlyInARow (vector<vector<vector<int> > >  &board, int row, int col, 
+	bool &change);
 
+inline bool valid (vector<vector<vector<int> > >  &board);
+
+inline bool solution (vector<vector<vector<int> > >  &board);
+
+backtrackingCall (vector<vector<vector<int> > >  &board);
+
+void backtrackingSol (vector<vector<vector<int> > >  board, bool &incomplete
+	vector<vector<vector<int> > >  &sol, int row, int col, int guess);
 
 #endif //sudoku-header 
 

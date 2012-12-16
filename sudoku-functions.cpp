@@ -6,7 +6,7 @@
 using namespace std;
 
 
-void printBoard (int board[9][9][10])
+void printBoard (vector<vector<vector<int> > >  &board)
 {
 	//print the board
 	for (int i = 0; i < 9; i++)
@@ -16,7 +16,8 @@ void printBoard (int board[9][9][10])
 			//if there is a solution for this square, print that
 			if (board[i][j][9] != 0)
 			{	
-				cout << GREEN << " " << board[i][j][9] <<RESET <<" ";
+				cout << GREEN << " " << board[i][j][9] 
+					<<RESET <<" ";
 			}
 			//otherwise, print a question mark
 			else
@@ -91,7 +92,8 @@ void printBoard (int board[9][9][10])
 }
 	
 
-void eliminateSubBoard (int board[9][9][10], int basis, int row, int col)
+void eliminateSubBoard (vector<vector<vector<int> > >  &board, int basis,
+	int row, int col)
 {
 	int subBoardRow = row/3;
 	int subBoardCol = col/3;
@@ -112,7 +114,8 @@ void eliminateSubBoard (int board[9][9][10], int basis, int row, int col)
 }
 
 
-void eliminateRow (int board[9][9][10], int basis, int row, int col)
+void eliminateRow (vector<vector<vector<int> > >  &board, int basis,
+	int row, int col)
 {
 	//navigate across the row
 	for (int j = 0; j < 9; j++)
@@ -125,7 +128,8 @@ void eliminateRow (int board[9][9][10], int basis, int row, int col)
 }
 
 
-void eliminateCol (int board[9][9][10], int basis, int row, int col)
+void eliminateCol (vector<vector<vector<int> > >  &board, int basis, int row, 
+	int col)
 {
 	//navigate down the col
 	for (int i = 0; i < 9; i++)
@@ -138,7 +142,7 @@ void eliminateCol (int board[9][9][10], int basis, int row, int col)
 }
 
 
-void clearMatches (int board[9][9][10])
+void clearMatches (vector<vector<vector<int> > >  &board)
 {
 	//rows
 	for (int i = 0; i < 9; i++)
@@ -149,7 +153,7 @@ void clearMatches (int board[9][9][10])
 			//delete any conflicts with the givens
 			if (board[i][j][9] != 0)
 			{
-				eliminateSubBoard (board, board [i][j][9], i, j);
+				eliminateSubBoard(board, board [i][j][9], i, j);
 				eliminateRow (board, board [i][j][9], i, j);
 				eliminateCol (board, board [i][j][9], i, j);
 			}
@@ -158,7 +162,7 @@ void clearMatches (int board[9][9][10])
 }
 
 
-void solveSingletons (int board[9][9][10], bool &change)
+void solveSingletons (vector<vector<vector<int> > >  &board, bool &change)
 {
 	//rows
 	for (int i = 0; i< 9; i++)
@@ -166,7 +170,7 @@ void solveSingletons (int board[9][9][10], bool &change)
 		//cols
 		for (int j = 0; j < 9; j++)
 		{
-			//if no solution for this square, iterate through possibilities
+			//if no solution for this square, check possibilities
 			if (board[i][j][9] == 0)
 			{
 				int numPossible = 0;
@@ -176,17 +180,17 @@ void solveSingletons (int board[9][9][10], bool &change)
 					if (board[i][j][n] == 2)
 					{
 						numPossible++;
-						//n+1 translates the array location
+						//n+1 translates the array loc
 						//into the number it represents
 						possibleAns = (n + 1);
 					}
 				}
-				//if there is only one possibility, that is the solution
+				//if there is only one possibility, that is sol
 				if (numPossible == 1)
 				{
 					board [i][j][possibleAns] = 1;
 					board [i][j][9] = possibleAns;
-					eliminateSubBoard (board, possibleAns, i, j);
+					eliminateSubBoard(board,possibleAns,i,j);
 					eliminateRow (board, possibleAns, i, j);
 					eliminateCol (board, possibleAns, i, j);
 					change = true;
@@ -197,7 +201,7 @@ void solveSingletons (int board[9][9][10], bool &change)
 }
 
 
-void findLoneSolutions (int board[9][9][10], bool &change)
+void findLoneSolutions (vector<vector<vector<int> > >  &board, bool &change)
 {
 	//rows
 	for (int i = 0; i< 9; i++)
@@ -214,7 +218,8 @@ void findLoneSolutions (int board[9][9][10], bool &change)
 }
 
 
-void rowLoneSolutions (int board [9][9][10], int row, int col, bool &change)
+void rowLoneSolutions (vector<vector<vector<int> > >  &board, int row, int col,
+	bool &change)
 {
 	//iterate possible numbers
 	for (int n = 0; n < 9; n++)
@@ -233,7 +238,7 @@ void rowLoneSolutions (int board [9][9][10], int row, int col, bool &change)
 				}
 			}	
 			//if a number is a possible in the given location and 
-			//nowhere else in the row, then it is that square's solution
+			//nowhere else in the row, then it is that square's sol
 			if (alternatives == 0 && (board[row][col][n] == 2))
 			{
 				board[row][col][9] = n+1;
@@ -255,7 +260,8 @@ void rowLoneSolutions (int board [9][9][10], int row, int col, bool &change)
 }
 
 
-void colLoneSolutions (int board [9][9][10], int row, int col, bool &change)
+void colLoneSolutions (vector<vector<vector<int> > >  &board, 
+	int row, int col, bool &change)
 {
 	//iterate possible numbers
 	for (int n = 0; n < 9; n++)
@@ -273,7 +279,7 @@ void colLoneSolutions (int board [9][9][10], int row, int col, bool &change)
 				}
 			}
 			//if a number is a possible in the given location and 
-			//nowhere else in the col, then it is that square's solution
+			//nowhere else in the col, then it is that square's sol
 			if ((alternatives == 0) && (board[row][col][n] == 2))
 			{
 				board[row][col][9] = n+1;
@@ -295,7 +301,7 @@ void colLoneSolutions (int board [9][9][10], int row, int col, bool &change)
 }
 
 
-void subBoardLoneSolution (int board [9][9][10], bool &change)
+void subBoardLoneSolution (vector<vector<vector<int> > >  &board, bool &change)
 {
 	//we navigate the 9 sub-boards
 	for (int subBoardRow = 0; subBoardRow < 3; subBoardRow++)
@@ -314,11 +320,13 @@ void subBoardLoneSolution (int board [9][9][10], bool &change)
 					//cols
 					for (int j = 0; j < 9; j++)
 					{
-						//if we are in the correct sub-board 
-						//for comparison and n is possible 
-						//for the square in question
-						if (i/3 == subBoardRow && j/3 ==\
-						subBoardCol && board[i][j][n] == 2)
+						//if we are in the correct 
+						//sub-board for comparison and
+						//n is possible for the square
+						//in question
+						if (i/3 == subBoardRow && j/3 \
+						== subBoardCol && \
+						board[i][j][n] == 2)
 						{
 							possibilities++;
 							row = i;
@@ -339,7 +347,7 @@ void subBoardLoneSolution (int board [9][9][10], bool &change)
 							board[row][col][x] = 0;
 						}
 					}
-					eliminateSubBoard (board, n+1, row, col);
+					eliminateSubBoard(board, n+1, row, col);
 					eliminateRow (board, n+1, row, col);
 					eliminateCol (board, n+1, row, col);
 					change = true;
@@ -350,7 +358,8 @@ void subBoardLoneSolution (int board [9][9][10], bool &change)
 }
 					
 
-void onlyInACol (int board[9][9][10], int row, int col, bool &change)
+void onlyInACol (vector<vector<vector<int> > >  &board, int row, int col,
+	bool &change)
 {
 	int subBoardRow = row/3;
 	int subBoardCol = col/3;
@@ -368,10 +377,11 @@ void onlyInACol (int board[9][9][10], int row, int col, bool &change)
 				//cols
 				for (int j = 0; j < 9; j++)
 				{
-					//if another row in that sub-board contains
-					//the number
-					if ((i/3 == subBoardRow) && (j != col) &&\
-					(j/3 == subBoardCol) && (board[i][j][n] == 2))
+					//if another row in that sub-board
+					//contains the number
+					if ((i/3 == subBoardRow) && (j != col) \
+					&& (j/3 == subBoardCol) && \
+					(board[i][j][n] == 2))
 					{
 						outsideCol++;
 					}
@@ -382,8 +392,8 @@ void onlyInACol (int board[9][9][10], int row, int col, bool &change)
 		//possibility for for this col in other sub-boards
 		if (outsideCol == 0 && board[row][col][n] == 2)
 		{
-			//eliminate that number as a possibility outside this sub-
-			//board but inside this col
+			//eliminate that number as a possibility outside this 
+			//sub-board but inside this col
 			for (int i = 0; i < 9; i++)
 			{
 				if (i/3 != subBoardRow)
@@ -398,7 +408,8 @@ void onlyInACol (int board[9][9][10], int row, int col, bool &change)
 }
 
 
-void onlyInARow (int board[9][9][10], int row, int col, bool &change)
+void onlyInARow (vector<vector<vector<int> > >  &board, int row, int col,
+	bool &change)
 {
 	int subBoardRow = row/3;
 	int subBoardCol = col/3;
@@ -416,10 +427,12 @@ void onlyInARow (int board[9][9][10], int row, int col, bool &change)
 				//cols
 				for (int j = 0; j < 9; j++)
 				{
-					//if another col in that sub-board contains
-					//the number, iterate the counter
-					if ((j/3 == subBoardCol) && (i != row) &&\
-					(i/3 == subBoardRow) && (board[i][j][n] == 2))
+					//if another col in that sub-board
+					//contains the number, iterate the
+					//counter
+					if ((j/3 == subBoardCol) && (i != row) \
+					&& (i/3 == subBoardRow) && \
+					(board[i][j][n] == 2))
 					{
 						outsideRow++;
 					}
@@ -430,8 +443,8 @@ void onlyInARow (int board[9][9][10], int row, int col, bool &change)
 		//possibility for for this row in other sub-boards
 		if (outsideRow == 0 && board[row][col][n] == 2)
 		{
-			//eliminate that number as a possibility outside this sub-
-			//board but inside this row
+			//eliminate that number as a possibility outside this 
+			//sub-board but inside this row
 			for (int j = 0; j < 9; j++)
 			{
 				if (j/3 != subBoardCol)
@@ -443,4 +456,139 @@ void onlyInARow (int board[9][9][10], int row, int col, bool &change)
 		}
 	} 			
 }
+
+inline bool valid (vector<vector<vector<int> > >  &board)
+{
+	for (int i = 0; i < 9; i++)
+	{
+		for (int j = 0; j < 9; j++)
+		{
+			if (board[i][i][9] == 0)
+			{
+				bool anyPossible = false;
+				for (int n = 0; n < 9; n++)
+				{
+					if (board[i][j][n])
+					{
+						anyPossible = true;
+					}
+				}
+				if (!anyPossible)
+				{
+					return false;
+				}
+			}
+		}
+	}
+	return true;
+}
+
+inline bool solution (vector<vector<vector<int> > >  &board)
+{
+	for (int i = 0; i < 9; i++)
+	{
+		for (int j = 0; j < 9; j++)
+		{
+			if (board[i][i][9] == 0)
+			{
+				return false;
+			}
+		}
+	}
+	return true;
+}
+
+backtrackingCall (vector<vector<vector<int> > >  &board)
+{
+	for (int i = 0; i < 9; i++)
+	{
+		for (int j = 0; j < 9; j++)
+		{
+			if (baord[i][j][9] != 0)
+			{
+				//if this square is solved,
+				//dont guess it
+				continue;
+			}
+			for (int n = 0;n < 9 && incomplete;n++)
+			{
+				if (board[i][j][n])
+				{
+					backtrackingSol (board,
+					incomplete, board, i, j, n);
+				}
+			}
+		}
+	}
+}
+
+void backtrackingSol (vector<vector<vector<int> > >  board, bool &incomplete
+	vector<vector<vector<int> > >  &sol, int row, int col, int guess)
+{
+	//attempt the guess
+	board [row][col][9] = guess + 1;
+	board [row][col][guess] = 1;
+	for (int x = 0; x < 9; x++)
+	{
+		if (x != n)
+		{
+			board[row][col][x] = 0;
+		}
+	}
+	eliminateSubBoard(board, guess + 1, row, col);
+	eliminateRow (board, guess + 1, row, col);
+	eliminateCol (board, guess + 1, row, col);
+	
+	//check if the guess kept the board valid
+	if (valid(board))
+	{
+		if (solution(board))
+		{
+			sol.swap(board);
+			incomplete = false;
+			return;
+		}
+		else
+		{
+			bool change = true;
+			int checker = 0;
+			while (change && checker < 10)
+			{
+				change = false;
+				solveSingletons (board, change);
+				findLoneSolutions(board, change);
+				subBoardLoneSolution (board, change);
+				checker++;
+			}
+			
+			for (int i = 0; i < 9; i++)
+			{
+				for (int j = 0; j < 9; j++)
+				{
+					if (baord[i][j][9] != 0)
+					{
+						//if this square is solved,
+						//dont guess it
+						continue;
+					}
+					for (int n = 0;n < 9 && incomplete;n++)
+					{
+						if (board[i][j][n])
+						{
+							backtrackingSol (board,
+							incomplete, sol, i,j,n);
+						}
+					}
+				}
+			}
+		}
+	}
+}
+
+
+
+
+
+
+
 
