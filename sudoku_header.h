@@ -182,7 +182,7 @@ inline bool solution (vector<vector<vector<int> > >  &board);
 //Requires: a valid board
 //Modifies: N/A
 //Effects: a breadth-first-search (BFS) of solution possibilities
-//	by guessing square's solutions and purning invalid boards
+//	by guessing square's solution and purning invalid boards
 void backtrackingSol (vector<vector<vector<int> > >  &board);
 
 #endif //sudoku-header 
