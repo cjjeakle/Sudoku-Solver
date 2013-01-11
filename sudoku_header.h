@@ -168,10 +168,21 @@ void onlyInACol (vector<vector<vector<int> > >  &board, int row, int col,
 void onlyInARow (vector<vector<vector<int> > >  &board, int row, int col, 
 	bool &change);
 
+//Requires: N/A
+//Modifies: N/A
+//Effects: determines if a given board fits all the constraints of a
+//	Sudoku
 inline bool valid (vector<vector<vector<int> > >  &board);
 
+//Requires: N/A
+//Modifies: N/A
+//Effects: determines if all board locations have a solution
 inline bool solution (vector<vector<vector<int> > >  &board);
 
+//Requires: a valid board
+//Modifies: N/A
+//Effects: a breadth-first-search (BFS) of solution possibilities
+//	by guessing square's solutions and purning invalid boards
 void backtrackingSol (vector<vector<vector<int> > >  &board);
 
 #endif //sudoku-header 
