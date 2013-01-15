@@ -499,8 +499,7 @@ void backtrackingSol (vector<vector<vector<int> > >  &board)
 {
 	queue<vector<vector<vector<int> > > > q;
 	q.push(board);
-	int test = 0;
-	while (!q.empty() && !solution(q.front()) && test < 10)
+	while (!q.empty() && !solution(q.front()))
 	{
 		for (int i = 0; i < 9; i++)
 		{
@@ -559,7 +558,7 @@ void backtrackingSol (vector<vector<vector<int> > >  &board)
 	else
 	{
 		cerr << "something has gone wrong and the backtracking function"
-		<< "has failed" <<endl;
+		<< " has failed" <<endl;
 	}
 }
 		
